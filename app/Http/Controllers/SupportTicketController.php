@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SupportTicket;
 use App\Http\Requests\StoreSupportTicketRequest;
 use App\Http\Requests\UpdateSupportTicketRequest;
+use App\Models\User;
 
 class SupportTicketController extends Controller
 {
@@ -13,7 +14,9 @@ class SupportTicketController extends Controller
      */
     public function index()
     {
-        //
+        $tickets = SupportTicket::with('user')->get();//una sola consulta adicional para traer los usuarios cuyo id coincida con los user_id de los tickets recuperados
+
+        return view('index', compact('tickets'));
     }
 
     /**
