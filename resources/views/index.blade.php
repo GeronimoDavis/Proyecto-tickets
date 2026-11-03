@@ -9,6 +9,16 @@
 </head>
 <body class="bg-light">
 
+  @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
   <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2><i class="fa-solid fa-headset me-2"></i>Gestión de Tickets de Soporte</h2>
@@ -17,6 +27,7 @@
       </button>
     </div>
 
+<!-- Tabla para mostrar los datos-->
     <div class="table-responsive shadow-sm">
       <table class="table table-striped table-hover align-middle">
         <thead class="table-dark">
@@ -59,6 +70,8 @@
     </div>
   </div>
 
+  <!--Modal de nuevo ticket -->
+
   <div class="modal fade" id="nuevoTicketModal" tabindex="-1" aria-labelledby="nuevoTicketModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
@@ -66,119 +79,100 @@
           <h5 class="modal-title" id="nuevoTicketModalLabel">
             <i class="fa-solid fa-plus-circle me-2"></i>Crear Nuevo Ticket
           </h5>
+          <!-- boton de cierra el modal X -->
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form>
+           <!-- FORMULARIO -->
+        <form method="POST" action="{{ route('store_ticket') }}" enctype="multipart/form-data">
+          @csrf
+          
+          <!-- titulo -->
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label">Título</label>
-                <input type="text" class="form-control" placeholder="Ingrese el título del ticket">
+                <input name="title" type="text" class="form-control" placeholder="Ingrese el título del ticket">
               </div>
-
-	<div class="col-md-6">
-  		<label for="usuarioTicket" class="form-label">
-    		<i class="fa-solid fa-user me-1"></i> Usuario asignado
-  		</label>
-  		<select class="form-select" id="usuarioTicket" name="usuario_id" required>
-    		<option value="" selected disabled>
-      		Seleccione un usuario
-    		</option>
-    		<option value="1">Juan Pérez</option>
-    		<option value="2">María López</option>
-    		<option value="3">Carlos Ruiz</option>
-  	</select>
-	</div>
-</div>
-<div class="row g-3">
-              <div class="col-md-12">
-                <label class="form-label">Categoría</label>
-                <select class="form-select">
-                  <option>Soporte</option>
-                  <option>Mantenimiento</option>
-                  <option>Instalación</option>
-                  <option>Otro</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <label class="form-label">Descripción</label>
-                <textarea class="form-control" rows="3" placeholder="Describa el problema..."></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Prioridad</label>
-                <select class="form-select">
-                  <option>Baja</option>
-                  <option selected>Media</option>
-                  <option>Alta</option>
-                  <option>Crítica</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Fecha Límite</label>
-                <input type="date" class="form-control">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Imagen (opcional)</label>
-                <input type="file" class="form-control" accept="image/*">
-              </div>
-            </div>
-          </form>
+        <!-- seleccion de usuario -->
+        <div class="col-md-6">
+            <label for="usuarioTicket" class="form-label">
+              <i class="fa-solid fa-user me-1"></i> Usuario asignado
+            </label>
+            <select name="user_id" class="form-select" id="usuarioTicket" name="usuario_id" required>
+              <option value="" selected disabled>
+                Seleccione un usuario
+              </option>
+              @foreach ($users as $user)
+                <option value="{{$user->id}}">{{$user->name}}</option>
+              @endforeach
+          </select>
+        </div>
+      </div>
+      <!-- categoria  -->
+      <div class="row g-3">
+                    <div class="col-md-12">
+                      <label class="form-label">Categoría</label>
+                      <select name="category" class="form-select">
+                        <option value="soporte">Soporte</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                        <option value="instalacion">Instalación</option>
+                        <option value="otro">Otro</option>
+                      </select>
+                    </div>
+                    <!-- descripcion -->
+                    <div class="col-12">
+                      <label class="form-label">Descripción</label>
+                      <textarea name="description" class="form-control" rows="3" placeholder="Describa el problema..."></textarea>
+                    </div>
+                    <!-- prioridad -->
+                    <div class="col-md-4">
+                      <label class="form-label">Prioridad</label>
+                      <select name="priority" class="form-select">
+                        <option value="baja">Baja</option>
+                        <option value="media">selected>Media</option>
+                        <option value="alta">Alta</option>
+                        <option value="critica">Crítica</option>
+                      </select>
+                    </div>
+                    <!-- fecha limite -->
+                    <div class="col-md-4">
+                      <label class="form-label">Fecha Límite</label>
+                      <input name="due_date" type="date" class="form-control">
+                    </div>
+                    <!-- imagen -->
+                    <div class="col-md-4">
+                      <label class="form-label">Imagen (opcional)</label>
+                      <input name="image_path" type="file" class="form-control" accept="image/*">
+                    </div>
+                  </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary">Guardar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
+      </form>
       </div>
     </div>
   </div>
-<!-- modal para ver las imagenes-->
-  <div class="modal fade" id="verImagenModal-1" tabindex="-1" aria-labelledby="verImagenModalLabel-1" aria-hidden="true">
+
+<!-- modal para ver las imagenes que se conecta con el boton por la id y muestra la imagen de cada ticket-->
+ @foreach ($tickets as $ticket)
+  <div class="modal fade" id="verImagenModal-{{$ticket->ticket_id}}" tabindex="-1" aria-labelledby="verImagenModalLabel-{{ $ticket->ticket_id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-dark text-white">
           <h5 class="modal-title" id="verImagenModalLabel-1">
-            <i class="fa-regular fa-image me-2"></i>Imagen del Ticket #1
+            <i class="fa-regular fa-image me-2"></i>Imagen del Ticket {{$ticket->ticket_id}}  del Usuario: {{ $ticket->user->name }}
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body text-center">
-          <img src="1.png" class="img-fluid rounded" alt="Imagen Ticket 1">
+          <img src="{{$ticket->image_path}}" class="img-fluid rounded" alt="Imagen Ticket {{ $ticket->ticket_id }}">
         </div>
       </div>
     </div>
   </div>
-
- <div class="modal fade" id="verImagenModal-2" tabindex="-1" aria-labelledby="verImagenModalLabel-2" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="verImagenModalLabel-2">
-            <i class="fa-regular fa-image me-2"></i>Imagen del Ticket #2
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body text-center">
-          <img src="2.png" class="img-fluid rounded" alt="Imagen Ticket 2">
-        </div>
-      </div>
-    </div>
-  </div>
-
-<div class="modal fade" id="verImagenModal-3" tabindex="-1" aria-labelledby="verImagenModalLabel-3" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="verImagenModalLabel-3">
-            <i class="fa-regular fa-image me-2"></i>Imagen del Ticket #3
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body text-center">
-          <img src="3.png" class="img-fluid rounded" alt="Imagen Ticket 3">
-        </div>
-      </div>
-    </div>
-  </div>
+@endforeach
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

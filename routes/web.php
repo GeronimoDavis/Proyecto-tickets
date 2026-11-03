@@ -19,7 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //rutas de ticket
-    Route::get('/show', [SupportTicketController::class, 'index'])->name('index_ticket');
+    Route::get('/tickets', [SupportTicketController::class, 'index'])->name('index_ticket');
+    Route::post(('/tickets'),[SupportTicketController::class, 'store'])->name('store_ticket');
 
 });
 

@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('index_ticket', absolute: false));//modificamos y en vez de dashboard ponemos index_ticket para al iniciar por login vaya directo a nuestra ruta de ver tickets
     }
 
     /**
