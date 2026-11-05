@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SupportTicket;
 use App\Http\Requests\StoreSupportTicketRequest;
 use App\Http\Requests\UpdateSupportTicketRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class SupportTicketController extends Controller
@@ -56,12 +57,23 @@ class SupportTicketController extends Controller
         return redirect()->route('index_ticket');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(SupportTicket $supportTicket)
+
+    public function showImage($id)
     {
-        //
+        //buscamos el ticket que queremos ver la imagen
+        $ticket = SupportTicket::findOrFail($id);
+
+        //verificamos si el ticket tiene imagen y si el archivo existe en el disco privado
+        if($ticket->image_path && Storage::disk('local')->exists($ticket->image_path)){
+
+            // Obtenemos la ruta absoluta en disco y la servimos
+            $path = Storage::disk('local')->path($ticket->image_path);
+
+            return response()->file($path);
+        }
+        
+       abort(404);
+
     }
 
     /**

@@ -20,7 +20,8 @@ Route::middleware('auth')->group(function () {
 
     //rutas de ticket
     Route::get('/tickets', [SupportTicketController::class, 'index'])->name('index_ticket');
-    Route::post(('/tickets'),[SupportTicketController::class, 'store'])->name('store_ticket');
+    Route::post('/tickets',[SupportTicketController::class, 'store'])->name('store_ticket');
+    Route::get('/tickets/{ticket}/image', [SupportTicketController::class, 'showImage'])->name('ticket_image');
 
 });
 

@@ -167,7 +167,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body text-center">
-          <img src="{{$ticket->image_path}}" class="img-fluid rounded" alt="Imagen Ticket {{ $ticket->ticket_id }}">
+          <img src="{{ route('ticket_image', $ticket->ticket_id) }}" class="img-fluid rounded" alt="Imagen Ticket {{ $ticket->ticket_id }}">
         </div>
       </div>
     </div>
