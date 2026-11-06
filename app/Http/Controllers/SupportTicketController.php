@@ -8,6 +8,7 @@ use App\Http\Requests\StoreSupportTicketRequest;
 use App\Http\Requests\UpdateSupportTicketRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use PHPUnit\Framework\Attributes\Ticket;
 
 class SupportTicketController extends Controller
 {
@@ -66,9 +67,9 @@ class SupportTicketController extends Controller
         //verificamos si el ticket tiene imagen y si el archivo existe en el disco privado
         if($ticket->image_path && Storage::disk('local')->exists($ticket->image_path)){
 
-            // Obtenemos la ruta absoluta en disco y la servimos
-            $path = Storage::disk('local')->path($ticket->image_path);
-
+            // Obtenemos la ruta absoluta en disco y la servimos porque image_path solo tiene la ruta relativa algo como 'tickets/k9J2mP.png'
+            $path = Storage::disk('local')->path($ticket->image_path);//Storage::disk('local') toma como carpeta raíz fija la ruta privada de Laravel storage/app/private
+            //path convierte la ruta relativa almacenada en Laravel en la ruta absoluta física del sistema operativo. C:\Proyecto-tickets\Project-ticket\storage\app\private\tickets\foto.png
             return response()->file($path);
         }
         
@@ -81,22 +82,41 @@ class SupportTicketController extends Controller
      */
     public function edit(SupportTicket $supportTicket)
     {
-        //
+        //no lo usamos porque no tenemos un formulario aparte 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSupportTicketRequest $request, SupportTicket $supportTicket)
+    public function updateStatus(Request $request, $id)//recibe el estatus por el cuerpo de la peticion y recibe el id del ticket por la ruta
     {
-        //
+        $ticket = SupportTicket::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'required|in:abierto,en_proceso,resuelto,cerrado',//rechaza otro valor que no este en la lista
+        ]);
+
+        if($validated){
+            $status = $validated["status"];
+            $ticket->update(['status' => $status]);
+        }
+
+        return redirect()->route('index_ticket');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SupportTicket $supportTicket)
+    public function updateCancelado($id)
     {
-        //
+        $ticket = SupportTicket::findOrFail($id);
+
+        if($ticket->cancelado == false){
+            $ticket->update(['cancelado' => true]);
+        }else{
+            $ticket->update(['cancelado' => false]);
+        }
+
+        return redirect()->route('index_ticket');
     }
 }

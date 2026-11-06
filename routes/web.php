@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/tickets', [SupportTicketController::class, 'index'])->name('index_ticket');
     Route::post('/tickets',[SupportTicketController::class, 'store'])->name('store_ticket');
     Route::get('/tickets/{ticket}/image', [SupportTicketController::class, 'showImage'])->name('ticket_image');
+    Route::patch('/tickets/{id}', [SupportTicketController::class, 'updateStatus'])->name('ticket_update_status');
+    Route::patch('/tickets/{id}/cancelar', [SupportTicketController::class, 'updateCancelado'])->name('ticket_cancelar');
 
 });
 

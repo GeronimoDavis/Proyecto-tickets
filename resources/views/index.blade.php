@@ -56,12 +56,34 @@
                 <button class="btn btn-sm btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#verImagenModal-{{ $ticket->ticket_id }}" title="Ver Imagen">
                   <i class="fa-regular fa-image"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-success me-2" title="Subir Estado">
-                  <i class="fa-solid fa-up-long"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger me-2" title="Cancelar Ticket">
-                  <i class="fa-solid fa-ban"></i>
-                </button>
+
+                <form method="POST" action="{{ route('ticket_update_status', $ticket->ticket_id) }}" class="d-inline">
+                    @csrf
+                    @method('PATCH')
+
+                    @if($ticket->status == 'abierto')
+                        <input type="hidden" value="en_proceso" name="status">
+                    @elseif($ticket->status == 'en_proceso')
+                        <input type="hidden" value="resuelto" name="status">
+                    @elseif($ticket->status == 'resuelto')
+                        <input type="hidden" value="cerrado" name="status">
+                    @else
+                        <input type="hidden" value="cerrado" name="status">
+                    @endif                  
+                    <button class="btn btn-sm btn-outline-success me-2" title="Subir Estado" type="submit">
+                        <i class="fa-solid fa-up-long"></i>
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('ticket_cancelar', $ticket->ticket_id) }}" class="d-inline">
+                  @csrf
+                  @method('PATCH')
+                  <button class="btn btn-sm btn-outline-danger me-2" title="Cancelar Ticket">
+                    <i class="fa-solid fa-ban"></i>
+                    @if($ticket->cancelado) disabled @endif
+                  </button>
+
+                </form>
               </td>
             </tr>
         @endforeach
@@ -167,7 +189,12 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body text-center">
-          <img src="{{ route('ticket_image', $ticket->ticket_id) }}" class="img-fluid rounded" alt="Imagen Ticket {{ $ticket->ticket_id }}">
+        <!--verificamos si tiene imagen el ticket -->
+          @if ($ticket->image_path)
+            <img src="{{ route('ticket_image', $ticket->ticket_id) }}" class="img-fluid rounded" alt="Imagen Ticket {{ $ticket->ticket_id }}">
+          @else
+            <i class="fa-solid fa-image-slash me-2"></i>Este ticket no posee una imagen adjunta.
+          @endif        
         </div>
       </div>
     </div>

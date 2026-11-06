@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('category', ['soporte', 'mantenimiento', 'instalación', 'otro']);
             $table->enum('priority', ['baja', 'media', 'alta', 'crítica']);
             $table->enum('status', ['abierto', 'en_proceso', 'resuelto', 'cerrado'])->default('abierto');
-            $table->string('image_path');
+            $table->string('image_path')->nullable();//las imagenes son opcionales
             $table->boolean('cancelado')->default(false);
             $table->date('due_date');
             $table->timestamps();
